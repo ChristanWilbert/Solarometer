@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:solarometer/RegisterDataScreen.dart';
 import 'package:solarometer/ViewScreen.dart';
@@ -30,9 +31,9 @@ class MyApp extends StatelessWidget {
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
-        primarySwatch: Colors.green,
+        primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Solarometer'),
+      home: const MyHomePage(title: 'SOLAROMETER'),
     );
   }
 }
@@ -51,7 +52,11 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Center(
+            child: Text(
+          widget.title,
+          style: GoogleFonts.robotoCondensed(),
+        )),
       ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
@@ -59,51 +64,25 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            ElevatedButton(
-              onPressed: () {
-                showModalBottomSheet<void>(
-                  context: context,
-                  isDismissible: false,
-                  useSafeArea: true,
-                  isScrollControlled: true,
-                  builder: (BuildContext context) {
-                    return ViewScreen();
-                  },
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  "VIEW",
-                  style: TextStyle(fontSize: 18),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                showModalBottomSheet<void>(
-                  context: context,
-                  isDismissible: false,
-                  useSafeArea: true,
-                  isScrollControlled: true,
-                  builder: (BuildContext context) {
-                    return RegisterDataScreen();
-                  },
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  "REGISTER",
-                  style: TextStyle(fontSize: 18),
-                ),
-              ),
-            ),
+            ViewScreen(),
           ],
         ),
+      ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 8, right: 8),
+        child: FloatingActionButton(
+            onPressed: () {
+              showModalBottomSheet<void>(
+                context: context,
+                isDismissible: false,
+                useSafeArea: true,
+                isScrollControlled: true,
+                builder: (BuildContext context) {
+                  return RegisterDataScreen();
+                },
+              );
+            },
+            child: Icon(Icons.add)),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }

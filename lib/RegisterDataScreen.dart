@@ -38,13 +38,13 @@ class _RegisterDataScreenState extends State<RegisterDataScreen> {
         child: Column(
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 GestureDetector(
                   child: const Icon(Icons.close),
                   onTap: () => Navigator.pop(context),
                 )
               ],
-              mainAxisAlignment: MainAxisAlignment.end,
             ),
             Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -64,7 +64,7 @@ class _RegisterDataScreenState extends State<RegisterDataScreen> {
                         initialDate: DateTime.now(),
                         firstDate: DateTime(
                             2000), //DateTime.now() - not to allow to choose before today.
-                        lastDate: DateTime(2101));
+                        lastDate: DateTime.now());
 
                     if (pickedDate != null) {
                       String formattedDate =
@@ -125,37 +125,61 @@ class _RegisterDataScreenState extends State<RegisterDataScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton.icon(
                       onPressed: () async {
-                        await readings.put(
-                            dateinput.text,
-                            ReadingModel(dateinput.text, reading.text,
-                                powerGeneration.text));
-                        //readings.clear();
                         // ignore: use_build_context_synchronously
                         showDialog<void>(
                           context: context,
                           barrierDismissible: false, // user must tap button!
                           builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: const Text('Date Entry Successfull'),
-                              content: SingleChildScrollView(
-                                child: ListBody(
-                                  children: <Widget>[
-                                    const Text('All good.'),
-                                    Text(
-                                        "${dateinput.text}: power generation is ${powerGeneration.text} Latest meter reading: ${reading.text}")
-                                  ],
-                                ),
-                              ),
-                              actions: <Widget>[
-                                TextButton(
-                                  child: const Text('Approve'),
-                                  onPressed: () {
-                                    closeDataRegScreen();
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ],
-                            );
+                            return (powerGeneration.text == "" ||
+                                    double.parse(powerGeneration.text) >= 0)
+                                ? AlertDialog(
+                                    title: const Text('Date Entry'),
+                                    content: SingleChildScrollView(
+                                      child: ListBody(
+                                        children: <Widget>[
+                                          Text(
+                                              "${dateinput.text}: power generation ${powerGeneration.text}Kwh "),
+                                          Text(
+                                              "Latest meter reading: ${reading.text}")
+                                        ],
+                                      ),
+                                    ),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        child: const Text('Add Data'),
+                                        onPressed: () async {
+                                          await readings.put(
+                                              dateinput.text,
+                                              ReadingModel(
+                                                  dateinput.text,
+                                                  reading.text,
+                                                  powerGeneration.text));
+                                          closeDataRegScreen();
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  )
+                                : AlertDialog(
+                                    title: const Text('Please Check Reading'),
+                                    content: SingleChildScrollView(
+                                      child: ListBody(
+                                        children: <Widget>[
+                                          Text(
+                                              "${dateinput.text}: power generation ${powerGeneration.text}Kwh "),
+                                          Text("power generation cannot be -ve")
+                                        ],
+                                      ),
+                                    ),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        child: const Text('ok'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
                           },
                         );
                       },
